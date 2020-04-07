@@ -1,0 +1,438 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Laravel Swagger API documentation",
+        "contact": {
+            "email": "admin@example.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://friend.loc/api/v1",
+            "description": "Laravel Swagger API server"
+        }
+    ],
+    "paths": {
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Login user",
+                "operationId": "App\\Http\\Controllers\\Api\\Auth\\LoginController::login",
+                "requestBody": {
+                    "description": "Login user by email",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserLoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "title": "user",
+                                            "properties": {
+                                                "user": {
+                                                    "title": "user",
+                                                    "$ref": "#/components/schemas/UserResponse"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error: Unprocessable Entity"
+                    },
+                    "401": {
+                        "description": "Error: Unauthorized"
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "User logout",
+                "operationId": "App\\Http\\Controllers\\Api\\Auth\\LoginController::logout",
+                "responses": {
+                    "200": {
+                        "description": "Successfully logged out"
+                    },
+                    "401": {
+                        "description": "Error: Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Auth": []
+                    }
+                ]
+            }
+        },
+        "/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Register user",
+                "operationId": "App\\Http\\Controllers\\Api\\Auth\\RegisterController::register",
+                "requestBody": {
+                    "description": "Registering user by form fields",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successfully registered."
+                    },
+                    "422": {
+                        "description": "Error: Unprocessable Entity"
+                    }
+                }
+            }
+        },
+        "/friend-request": {
+            "post": {
+                "tags": [
+                    "Friend request"
+                ],
+                "description": "Friend request",
+                "operationId": "App\\Http\\Controllers\\Api\\FriendRequestController::store",
+                "requestBody": {
+                    "description": "Friend request",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateFriendRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Friend request created successfully"
+                    },
+                    "422": {
+                        "description": "Error: Unprocessable Entity"
+                    },
+                    "401": {
+                        "description": "Error: Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Auth": []
+                    }
+                ]
+            }
+        },
+        "/friend-response": {
+            "post": {
+                "tags": [
+                    "Friend Response"
+                ],
+                "description": "Accept request",
+                "operationId": "App\\Http\\Controllers\\Api\\FriendResponseController::store",
+                "requestBody": {
+                    "description": "Accept request",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AcceptFriendRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Friend accept successfully"
+                    },
+                    "422": {
+                        "description": "Error: Friend accept Not Found"
+                    },
+                    "401": {
+                        "description": "Error: Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Auth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Friend Response"
+                ],
+                "description": "Ignore request",
+                "operationId": "App\\Http\\Controllers\\Api\\FriendResponseController::destroy",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "Ignore request",
+                        "required": true,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "422": {
+                        "description": "Error: Unprocessable Entity"
+                    },
+                    "401": {
+                        "description": "Error: Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "Auth": []
+                    }
+                ]
+            }
+        },
+        "/user": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "operationId": "Get list of users",
+                "responses": {
+                    "200": {
+                        "description": "User list response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error."
+                    }
+                },
+                "security": [
+                    {
+                        "Auth": []
+                    }
+                ]
+            }
+        },
+        "/user/{user}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "description": "Get User details",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "Get User details",
+                        "required": true,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "description": "Updated name of the pet",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Error: Unauthorized"
+                    },
+                    "404": {
+                        "description": "Client not found."
+                    }
+                },
+                "security": [
+                    {
+                        "Auth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AcceptFriendRequest": {
+                "title": "Accept friend request",
+                "description": "Accept friend request",
+                "properties": {
+                    "friend_id": {
+                        "title": "Friend id",
+                        "description": "Friend id",
+                        "type": "string",
+                        "format": "string",
+                        "example": "1"
+                    },
+                    "user_id": {
+                        "title": "User id",
+                        "description": "User id",
+                        "type": "string",
+                        "format": "string",
+                        "example": "2"
+                    },
+                    "status": {
+                        "title": "Status",
+                        "description": "Status",
+                        "type": "string",
+                        "format": "integer",
+                        "example": "1"
+                    }
+                },
+                "type": "object"
+            },
+            "CreateFriendRequest": {
+                "title": "Create friend request",
+                "description": "Create friend request",
+                "properties": {
+                    "friend_id": {
+                        "title": "Friend id",
+                        "description": "Friend id",
+                        "type": "string",
+                        "format": "string",
+                        "example": "1"
+                    }
+                },
+                "type": "object"
+            },
+            "UserLoginRequest": {
+                "title": "User login request.",
+                "description": "User login request.",
+                "properties": {
+                    "email": {
+                        "title": "email",
+                        "type": "string",
+                        "example": "mail@example.com"
+                    },
+                    "password": {
+                        "title": "password",
+                        "type": "string",
+                        "example": "123123123"
+                    }
+                },
+                "type": "object"
+            },
+            "UserRegisterRequest": {
+                "title": "User register request",
+                "description": "User register by form fields.",
+                "properties": {
+                    "name": {
+                        "title": "name",
+                        "type": "string",
+                        "example": "name"
+                    },
+                    "email": {
+                        "title": "email",
+                        "type": "string",
+                        "example": "mail@example.com"
+                    },
+                    "password": {
+                        "title": "password",
+                        "type": "string",
+                        "example": "123123123"
+                    },
+                    "password_confirmation": {
+                        "title": "password",
+                        "type": "string",
+                        "example": "123123123"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResponse": {
+                "title": "User response example",
+                "description": "User response example",
+                "properties": {
+                    "id": {
+                        "title": "User id",
+                        "type": "integer",
+                        "example": "1"
+                    },
+                    "name": {
+                        "title": "User name",
+                        "description": "User name",
+                        "type": "string",
+                        "format": "string",
+                        "example": "name"
+                    },
+                    "email": {
+                        "title": "email",
+                        "description": "User email",
+                        "type": "string",
+                        "format": "string",
+                        "example": "mail@example.com"
+                    },
+                    "password": {
+                        "title": "User password",
+                        "description": "User password",
+                        "type": "string",
+                        "format": "string",
+                        "example": "password"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "Auth": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}

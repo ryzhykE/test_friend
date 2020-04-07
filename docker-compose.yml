@@ -1,0 +1,46 @@
+version: '3'
+services:
+  nginx:
+    container_name: nginx_hg_live
+    image: nginx:1.12
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/mysite.template
+      - ./:/var/www/html
+    ports:
+      - ${HTTP_PORT}:80
+    depends_on:
+      - php
+    working_dir: /var/www/html
+    environment:
+      - NGINX_HOST=${NGINX_HOST}
+      - NGINX_ROOT_PATH=/var/www/html/public
+    command: /bin/sh -c "envsubst '$$NGINX_HOST $$NGINX_ROOT_PATH' < /etc/nginx/conf.d/mysite.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+    restart: always
+  php:
+    container_name: php_hg_live
+    build:
+      context: docker/php
+      dockerfile: Dockerfile
+      args:
+        PHP_TAG: ${PHP_TAG}
+        DOCKER_USER: ${CURRENT_UID}
+    user: ${CURRENT_UID}
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - mysql
+    restart: always
+  mysql:
+    image: mysql:8
+    container_name: mysql_hg_live
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - 3308:3308
+    volumes:
+      - ./.data/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    restart: always
